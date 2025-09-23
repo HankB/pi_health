@@ -10,7 +10,7 @@ Some of my Raspberry Pis refuse to continue to operate and have resisted attempt
 
 |value|description|typical|units|source|notes|
 |---|---|---|---|---|---|
-|rssi|WiFi signal strength|-66|dB|||
+|rssi|WiFi signal strength|-66|dB||and other WiFi parameters|
 |CPU_temp|CPU temperature|45|°C|||
 |various memory|||||needs research|
 |disk space|||||needs research|
@@ -36,3 +36,45 @@ It's silly to assume I'm the first to want something like this.
 * <https://github.com/roger-/hass-sysmon>
 * <https://github.com/timmo001/system-bridge>
 * <https://community.home-assistant.io/t/how-to-monitor-system-resources-on-another-pi/32657/12>
+
+## Sources
+
+Preference goes to entries in `/proc` or `/sys` filesystems. Another source is the command `vcgencmd` which fetches information from the "VideoCore GPU". An number of commands are [listed here](./vcgencmd.md).
+
+### Wireless
+
+```text
+hbarta@brandywine:~ $ cat /proc/net/wireless
+Inter-| sta-|   Quality        |   Discarded packets               | Missed | WE
+ face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon | 22
+ wlan0: 0000   51.  -59.  -256        0      0      0    189      0        0
+hbarta@brandywine:~ $
+```
+
+Alternate `iwlist wlan0 scanning`.
+
+### Temperature
+
+Thousandths of a degree. (e.g. °C x 1000.)
+
+```text
+hbarta@brandywine:~ $ cat /sys/class/thermal/thermal_zone0/temp
+45464
+hbarta@brandywine:~ $ 
+```
+
+Alternate `vcgencmd measure_temp`.
+
+### Memory
+
+[`cat /proc/meminfo`](./meminfo.md).
+
+Alternate `free` or `free -m`.
+
+Find high memory processes `ps aux --sort=-%mem | head -n 10`
+
+### Disk
+
+Raw information can probably be sussed from `/sys/block` but it seems more fruitful to use [output of `df`](./df.md). 
+
+
