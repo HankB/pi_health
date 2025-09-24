@@ -77,4 +77,46 @@ Find high memory processes `ps aux --sort=-%mem | head -n 10`
 
 Raw information can probably be sussed from `/sys/block` but it seems more fruitful to use [output of `df`](./df.md). 
 
+### CPU usage (%)
 
+* <https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux>
+* <https://www.idnt.net/en-US/kb/941772>
+* <https://man7.org/linux/man-pages/man5/proc_stat.5.html>
+
+Numbers are in `/proc/stat` or parse the output from `top` or similar.
+
+### CPU Load
+
+* <https://superuser.com/questions/1402079/understanding-load-average-and-cpu-in-linux>
+* <https://www.linuxjournal.com/article/9001>
+
+```text
+hbarta@brandywine:~ $ cat /proc/loadavg
+0.76 0.77 0.70 2/121 23978
+hbarta@brandywine:~ $ 
+```
+
+### CPU Voltage
+
+* See man page for details
+
+`vcgencmd measure_volts` and `vcgencmd get_throttled`
+
+## Implementation
+
+* Some params can be read directly from pseudo-filesystems `/proc`/ and `/sys`. These are all text.
+* Some parameters can be collected from system commands, again text.
+* %CPU from `/proc/stat` requires processing beyond just reading a value. That processing is already performed by `top`.
+* Particularly WRT a Pi Zero, it is important to minimize processing requirements to avoid overloading the host with monitoring.
+
+With the ease that a `bash` script provides for extracting information frrom files and the output of commands, that seems to be the easiest option to implement. The first cut will use that with the plan that a compiled langiage could be used for a second generation should the back process use too much CPU.
+
+### bash
+
+Done in a subdirectory and the general structure will be:
+
+* There will be a bash function for each source and these will be in a file that can be sourced by a test script or the actual driver script.
+* A command line argument will be provided to identify the source, either a file name or a command.
+* Each function will write a string to standard out consisting of a single line formatted suitably to be included in a JSON package.
+* A test driver will be provided for development purposes that will mock the inputs.
+* Any required diagnostics will be written to standard error.
