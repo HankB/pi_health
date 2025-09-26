@@ -1,0 +1,18 @@
+# Code to test the getters.
+
+#!/usr/bin/env bash
+# Bash3 Boilerplate. Copyright (c) 2014, kvz.io
+
+set -o errexit
+set -o pipefail
+set -o nounset
+############### end of Boilerplate
+
+# expect 'getters.sh' in the same directory and test data in .../test_data
+
+source_dir=$(dirname "$0")
+source $source_dir/getters.sh
+
+wifi_stuff=$(get_wifi test_data/proc_net_wireless.txt)
+
+echo "{ $wifi_stuff }"
