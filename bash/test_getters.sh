@@ -16,3 +16,7 @@ source $source_dir/getters.sh
 wifi_stuff=$(get_wifi test_data/proc_net_wireless.txt)
 
 echo "{ $wifi_stuff }"
+
+cpu_temp=$(get_cpu_temp test_data/sys_class_thermal_thermal_zone0_temp.txt)
+
+echo "{ $cpu_temp }"
