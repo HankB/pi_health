@@ -7,3 +7,11 @@
 * `collect_stats.sh` - The actual driver that will source `getters` and output a timestamped JSON package with the results.
 
 It is planned that the output of `collect_stats.sh` will be piped to `mosquitto_pub` to actually publish the results.
+
+## Testing
+
+```text
+shellcheck -x test_getters.sh 
+```
+
+Execute `test_getters.sh` and validate JSON compliance with your favorite linter.
